@@ -16,13 +16,12 @@ const client = new Client()
 const database = new Databases(client);
 
 export const updateSearchCount = async (query: string, movie: Movie) => {
-  console.log("DATABASE_ID:", DATABASE_ID);
-  console.log("COLLECTION_ID:", COLLECTION_ID);
-  console.log("PROJECT_ID:", process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID);
   try {
     const result = await database.listDocuments(DATABASE_ID, COLLECTION_ID, [
       Query.equal("searchTerm", query),
     ]);
+
+    console.log(result.documents);
 
     if (result.documents.length > 0) {
       const existingMovie = result.documents[0];
@@ -49,8 +48,10 @@ export const updateSearchCount = async (query: string, movie: Movie) => {
         [Permission.read("role:all"), Permission.write("role:all")]
       );
     }
-  } catch (error) {
-    console.error("Error updating search count:", error);
-    throw error;
+  } catch (error: any) {
+    console.error(
+      "Error updating search count:",
+      error.response?.message || error.message || error
+    );
   }
 };
