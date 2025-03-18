@@ -11,7 +11,7 @@ const COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID!;
 
 const client = new Client()
   .setEndpoint("https://cloud.appwrite.io/v1")
-  .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!);
+  .setProject("67cc8a54000d5a602359");
 
 const database = new Databases(client);
 
@@ -21,10 +21,10 @@ export const updateSearchCount = async (query: string, movie: Movie) => {
       Query.equal("searchTerm", query),
     ]);
 
-    console.log(result.documents);
+    const documents = [...result.documents];
 
-    if (result.documents.length > 0) {
-      const existingMovie = result.documents[0];
+    if (documents.length > 0) {
+      const existingMovie = documents[0];
       await database.updateDocument(
         DATABASE_ID,
         COLLECTION_ID,
@@ -53,5 +53,21 @@ export const updateSearchCount = async (query: string, movie: Movie) => {
       "Error updating search count:",
       error.response?.message || error.message || error
     );
+  }
+};
+
+export const getTrendingMovies = async (): Promise<
+  TrendingMovie[] | undefined
+> => {
+  try {
+    const result = await database.listDocuments(DATABASE_ID, COLLECTION_ID, [
+      Query.limit(5),
+      Query.orderDesc("count"),
+    ]);
+
+    return result.documents as unknown as TrendingMovie[];
+  } catch (error) {
+    console.error(error);
+    return undefined;
   }
 };
