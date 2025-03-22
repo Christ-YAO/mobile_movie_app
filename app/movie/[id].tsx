@@ -37,7 +37,7 @@ const Details = () => {
 
   if (loading)
     return (
-      <SafeAreaView className="bg-primary flex-1">
+      <SafeAreaView className="bg-primary flex-1 h-screen flex items-center justify-center">
         <ActivityIndicator />
       </SafeAreaView>
     );
